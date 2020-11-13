@@ -3,7 +3,6 @@ environment:
     - job_group: tests
       APPVEYOR_BUILD_WORKER_IMAGE: Visual Studio 2019
       PYTHON: "C:\\Python38-x64"
-      PYTHON_ARCH: "64"
 
     - job_group: tests
       APPVEYOR_BUILD_WORKER_IMAGE: Ubuntu2004
@@ -13,6 +12,7 @@ environment:
     - job_name: deploy
       job_depends_on: tests
       APPVEYOR_BUILD_WORKER_IMAGE: Ubuntu2004
+      PYTHON: "3.9"
 
   # Release automation credentials; see https://www.appveyor.com/docs/how-to/git-push/
   GIT_TOKEN:
