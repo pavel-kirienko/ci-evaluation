@@ -2,7 +2,7 @@ environment:
   matrix:
     - job_group: tests
       APPVEYOR_BUILD_WORKER_IMAGE: Visual Studio 2019
-      PYTHON: "C:\\Python38-x64"
+      PYTHON: "C:\\Python39-x64"
 
     - job_group: tests
       APPVEYOR_BUILD_WORKER_IMAGE: Ubuntu2004
@@ -48,5 +48,5 @@ for:
       - sh: git config --global credential.helper store
       - sh: git config --global user.email "devnull@uavcan.org"
       - sh: git config --global user.name  "Release Automation"
-      - sh: git tag -a "0.1" -m "0.1"
+      - sh: git tag -a "0.2" -m "0.2"
       - sh: git push --tags
