@@ -1,0 +1,52 @@
+environment:
+  matrix:
+    - job_group: tests
+      APPVEYOR_BUILD_WORKER_IMAGE: Visual Studio 2019
+      PYTHON: "C:\\Python38-x64"
+      PYTHON_ARCH: "64"
+
+    - job_group: tests
+      APPVEYOR_BUILD_WORKER_IMAGE: Ubuntu2004
+      PYTHON: "3.9"
+      coverage: 1
+
+    - job_name: deploy
+      job_depends_on: tests
+      APPVEYOR_BUILD_WORKER_IMAGE: Ubuntu2004
+
+  # Release automation credentials; see https://www.appveyor.com/docs/how-to/git-push/
+  GIT_TOKEN:
+    secure: +jQhxLpePj6hdDryfET/XpLo7VL9fhDXVHlwLOPp/nRDYe97TJAfd0XCTuPz1qkT
+  TWINE_USERNAME: __token__
+  TWINE_PASSWORD:
+    secure: +ZVhECKV0ESBrvUGXVd9wpt9xhMMHeIXSJalghKMKGCrxqvvg7/yMm9kPO+xH1T310zzMpnDUxknR1Q05mjAX5MU70MiHiWAB2fBjNwrMSTQZP4kCpKtznAIM/iCwVczbNolbB3tsUn4OS3rQjXyz7lUdYnaeM7sqF1IZNj55/spCPsAJUmi5DYj8M+6zkaPdCZEswlH7lARJG1g+l4/tbyiBssuyDdmY0AQxJVXDGBXKeHU8frHrWayEI5holjF+oFwx2b6Fz1zZ7uznrGpDQ==
+
+stack: python %PYTHON%
+build: off
+skip_tags: true
+
+# https://www.appveyor.com/blog/2018/04/25/specialized-build-matrix-configuration-in-appveyor/
+# https://www.appveyor.com/docs/job-workflows/
+for:
+  - matrix:
+      only:
+        - job_group: tests
+    install:
+      - echo "INSTALLING..."
+    test_script:
+      - echo "TESTING..."
+    on_success:
+      - echo "SUCCESS!"
+  - matrix:
+      only:
+        - job_name: deploy
+    branches:
+      only:
+        - main
+    deploy_script:
+      - sh: echo "https://${GIT_TOKEN}:x-oauth-basic@github.com" > ~/.git-credentials
+      - sh: git config --global credential.helper store
+      - sh: git config --global user.email "devnull@uavcan.org"
+      - sh: git config --global user.name  "Release Automation"
+      - sh: git tag -a "0.1" -m "0.1"
+      - sh: git push --tags
