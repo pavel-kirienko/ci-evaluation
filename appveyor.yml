@@ -18,20 +18,28 @@ for:
       only:
         - job_group: tests
     install:
+      # INSTALL PYPY
       - sh: pip install virtualenv
       - sh: wget https://downloads.python.org/pypy/pypy3.7-v7.3.2-linux64.tar.bz2 -O pypy.tar.bz2
       - sh: tar -xf pypy.tar.bz2
       - sh: rm -f *.tar.bz2
-      - sh: virtualenv -p pypy3*-*/bin/pypy pypy
-      - sh: source pypy/bin/activate
-      - sh: pypy -m ensurepip
-      - sh: pypy -m pip install numpy
+      - sh: virtualenv -p pypy3*-*/bin/pypy python
+      - sh: source python/bin/activate
+      - sh: python -m ensurepip
+      - sh: python -m pip install numpy
+
+      # INSTALL PYUAVCAN & BUILD DEPS
+      - sh: export extras_pkg="linux-*-extra-$(uname -r)"
+      - sh: echo $extras_pkg
+      - sh: sudo apt-get install -y $extras_pkg graphviz ncat
+      - sh: git clone --recursive https://github.com/UAVCAN/pyuavcan
 
       - cmd: set PATH=%PYTHON%;%PYTHON%\Scripts;%PATH%
       - cmd: python --version
       - cmd: pip install numpy
     test_script:
-      - sh: pypy -c "import numpy"
-      - cmd: python -c "import numpy"
+      - python --version
+      - sh: cd pyuavcan
+      - sh: ./test.sh
     on_success:
       - echo "SUCCESS!"
