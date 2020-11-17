@@ -18,17 +18,20 @@ for:
       only:
         - job_group: tests
     install:
-      - sh: sudo add-apt-repository ppa:pypy/ppa
-      - sh: sudo apt update
-      - sh: sudo apt install -y pypy3
-      - sh: pypy3 -m ensurepip
-      - sh: pypy3 -m pip install numpy
+      - sh: pip install virtualenv
+      - sh: wget https://downloads.python.org/pypy/pypy3.7-v7.3.2-linux64.tar.bz2 -O pypy.tar.bz2
+      - sh: tar -xf pypy.tar.bz2
+      - sh: rm -f *.tar.bz2
+      - sh: virtualenv -p pypy3*-*/bin/pypy pypy
+      - sh: source pypy/bin/activate
+      - sh: pypy -m ensurepip
+      - sh: pypy -m pip install numpy
 
       - cmd: set PATH=%PYTHON%;%PYTHON%\Scripts;%PATH%
       - cmd: python --version
       - cmd: pip install numpy
     test_script:
-      - sh: pypy3 -c "import numpy"
+      - sh: pypy -c "import numpy"
       - cmd: python -c "import numpy"
     on_success:
       - echo "SUCCESS!"
