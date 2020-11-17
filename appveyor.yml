@@ -18,10 +18,17 @@ for:
       only:
         - job_group: tests
     install:
+      - sh: sudo add-apt-repository ppa:pypy/ppa
+      - sh: sudo apt update
+      - sh: sudo apt install -y pypy3
+      - sh: pypy3 -m ensurepip
+      - sh: pypy3 -m pip install numpy
+
       - cmd: set PATH=%PYTHON%;%PYTHON%\Scripts;%PATH%
-      - python --version
-      - pip install numpy
+      - cmd: python --version
+      - cmd: pip install numpy
     test_script:
-      - python -c "import numpy"
+      - sh: pypy3 -c "import numpy"
+      - cmd: python -c "import numpy"
     on_success:
       - echo "SUCCESS!"
