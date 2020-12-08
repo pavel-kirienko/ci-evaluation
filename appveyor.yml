@@ -31,6 +31,7 @@ for:
       - pip install libpcap
     test_script:
       - python --version
+      - tree /F C:\Python39-x64\lib\site-packages\libpcap
       - python -vc "import libpcap"
     on_success:
       - echo 'SUCCESS!'
