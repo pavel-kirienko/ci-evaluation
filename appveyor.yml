@@ -32,7 +32,7 @@ for:
     test_script:
       - python --version
       - python test.py
-      - set PATH=C:\Python39-x64\lib\site-packages\libpcap\_platform\_windows\x64\wpcap;%PATH%
+      - cmd: set PATH=C:\Python39-x64\lib\site-packages\libpcap\_platform\_windows\x64\wpcap;%PATH%
       - python test.py
     on_success:
       - echo 'SUCCESS!'
