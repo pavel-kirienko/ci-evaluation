@@ -32,6 +32,9 @@ for:
     test_script:
       - python --version
       - tree /F C:\Python39-x64\lib\site-packages\libpcap
-      - python -vc "import libpcap"
+      - python -c "import sys; print(sys.maxsize.bit_length())"
+      - python -c "from ctypes.util import find_library; find_library(r'C:/Python39-x64/lib/site-packages/libpcap/_platform/_windows/x32/wpcap/wpcap.dll')"
+      - python -c "from ctypes.util import find_library; find_library(r'C:/Python39-x64/lib/site-packages/libpcap/_platform/_windows/x64/wpcap/wpcap.dll')"
+      - python -c "import libpcap"
     on_success:
       - echo 'SUCCESS!'
