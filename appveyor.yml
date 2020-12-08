@@ -29,10 +29,9 @@ for:
       - cmd: set PATH=%PYTHON%;%PYTHON%\Scripts;%PATH%
       - python --version
       - pip install libpcap
+      - sh: sudo setcap cap_net_raw+eip "$(readlink -f $(command -v python))"
     test_script:
       - python --version
-      - python test.py
-      - cmd: set PATH=C:\Python39-x64\lib\site-packages\libpcap\_platform\_windows\x64\wpcap;%PATH%
       - python test.py
     on_success:
       - echo 'SUCCESS!'
