@@ -2,19 +2,19 @@ environment:
   matrix:
     - job_group: tests
       APPVEYOR_BUILD_WORKER_IMAGE: Visual Studio 2019
-      PYTHON: "C:\\Python39-x64"
+      PYTHON: 'C:\\Python39-x64'
 
     - job_group: tests
       APPVEYOR_BUILD_WORKER_IMAGE: Visual Studio 2019
-      PYTHON: "C:\\Python38-x64"
+      PYTHON: 'C:\\Python38-x64'
 
     - job_group: tests
       APPVEYOR_BUILD_WORKER_IMAGE: Visual Studio 2019
-      PYTHON: "C:\\Python37-x64"
+      PYTHON: 'C:\\Python37-x64'
 
     - job_group: tests
       APPVEYOR_BUILD_WORKER_IMAGE: Ubuntu2004
-      PYTHON: "3.9"
+      PYTHON: '3.9'
       coverage: 1
 
 stack: python %PYTHON%
@@ -31,6 +31,6 @@ for:
       - pip install libpcap
     test_script:
       - python --version
-      - python -c "import libpcap"
+      - python -vc "import libpcap"
     on_success:
-      - echo "SUCCESS!"
+      - echo 'SUCCESS!'
