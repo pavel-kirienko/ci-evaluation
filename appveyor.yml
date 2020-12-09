@@ -31,7 +31,7 @@ for:
       - pip install libpcap
       - sh: sudo setcap cap_net_raw+eip "$(readlink -f $(command -v python))"
       # Configure the NPF driver
-      - ps: cinst npcap -packageParameters '/winpcap_mode=yes' -y
+      - ps: cinst winpcap -y
     test_script:
       - python --version
       - python test.py
