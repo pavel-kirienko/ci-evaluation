@@ -26,17 +26,21 @@ if sys.platform.startswith('win'):
         os.environ['PATH'] += os.pathsep + str(dll_path)
 
 
-def _filter_devices(address_families: typing.Sequence[AddressFamily]) -> typing.List[str]:
+def _find_devices() -> typing.List[str]:
     """
-    Returns a list of local network devices that have at least one address from the specified list of address
-    families. This is needed so that we won't attempt capturing Ethernet frames on a CAN device, for instance.
-    Such filtering automatically excludes devices whose interfaces are down, since they don't have any address.
+    Returns a list of local network devices that can be captured from.
+    Raises a PermissionError if the user is suspected to lack the privileges necessary for capture.
+
+    We used to filter the devices by address family, but it turned out to be a dysfunctional solution because
+    a device does not necessarily have to have an address in a particular family to be able to capture packets
+    of that kind. For instance, on Windows, a virtual network adapter may have no addresses while still being
+    able to capture packets.
     """
     import libpcap as pcap
     err_buf = ctypes.create_string_buffer(pcap.PCAP_ERRBUF_SIZE)
     devices = ctypes.POINTER(pcap.pcap_if_t)()
     if pcap.findalldevs(ctypes.byref(devices), err_buf) != 0:
-        raise TransportError(f"Could not list network devices: {err_buf.value.decode()}")
+        raise Exception(f"Could not list network devices: {err_buf.value.decode()}")
     if not devices:
         # This may seem odd, but libpcap returns an empty list if the user is not allowed to perform capture.
         # This is documented in the API docs as follows:
@@ -49,22 +53,13 @@ def _filter_devices(address_families: typing.Sequence[AddressFamily]) -> typing.
     while d:
         d = d.contents
         name = d.name.decode()
-        if name == 'any':
-            _logger.debug('Synthetic device %r does not support promiscuous mode, skipping', name)
+        if name != 'any':
+            dev_names.append(name)
         else:
-            a = d.addresses
-            while a:
-                a = a.contents
-                if a.addr and a.addr.contents.sa_family in address_families:
-                    dev_names.append(name)
-                    break
-                a = a.next
-            else:
-                _logger.debug('Device %r is incompatible with requested address families %s, skipping',
-                              name, address_families)
+            _logger.debug('Synthetic device %r does not support promiscuous mode, skipping', name)
         d = d.next
     pcap.freealldevs(devices)
     return dev_names
 
 
-print(_filter_devices([AddressFamily.AF_INET]))
+print(_find_devices())
