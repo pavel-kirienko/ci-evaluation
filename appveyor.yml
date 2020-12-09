@@ -31,10 +31,7 @@ for:
       - pip install libpcap
       - sh: sudo setcap cap_net_raw+eip "$(readlink -f $(command -v python))"
       # Configure the NPF driver
-      - ps: Invoke-WebRequest https://github.com/3gstudent/Winpcap_Install/raw/6ff3c2ee4056fa9ccba6e972ece5455628b03026/npf_x64.sys -OutFile npf.sys
-      - ps: mv npf.sys "$env:SystemRoot/system32/drivers/npf.sys"
-      - ps: sc.exe create npf binPath= system32\drivers\npf.sys type= kernel start= demand error= normal tag= no DisplayName= "NPF Driver"
-      - ps: sc.exe start npf
+      - ps: cinst npcap -packageParameters '/winpcap_mode=yes' -y
     test_script:
       - python --version
       - python test.py
