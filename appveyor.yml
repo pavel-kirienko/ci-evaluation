@@ -29,7 +29,7 @@ for:
       # Configure the NPF driver
       - ps: wget "https://nmap.org/npcap/dist/npcap-0.96.exe" -UseBasicParsing -OutFile npcap.exe
       - ps: .\npcap.exe /loopback_support=yes /winpcap_mode=yes /S
-      - ps: cinst --no-progress -y wireshark
+      #- ps: cinst --no-progress -y wireshark
       # The previous steps may have disrupted connectivity because installation of the NDIS driver does that on Windows.
       # Restart VM to recover network connectivity as suggested in https://github.com/appveyor/ci/issues/3491.
       - ps: Start-Sleep -s 5; Restart-Computer
