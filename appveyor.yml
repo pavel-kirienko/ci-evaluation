@@ -33,6 +33,8 @@ for:
       # Configure the NPF driver
       - ps: wget "https://nmap.org/npcap/dist/npcap-0.96.exe" -UseBasicParsing -OutFile npcap.exe
       - ps: .\npcap.exe /loopback_support=yes /S
+      - ps: sc.exe start npcap
+      - ps: sc.exe start npf
       - python --version
     test_script:
       - python test.py
