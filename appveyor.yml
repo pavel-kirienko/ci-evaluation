@@ -34,6 +34,9 @@ for:
       - ps: wget "https://nmap.org/npcap/dist/npcap-0.96.exe" -UseBasicParsing -OutFile npcap.exe
       - ps: .\npcap.exe /loopback_support=yes /winpcap_mode=yes /S
       - ps: cinst --no-progress -y wireshark
+      # Restart VM  https://github.com/appveyor/ci/issues/3491
+      - ps: Start-Sleep -s 5; Restart-Computer
+      - ps: Start-Sleep -s 5
       - python --version
     test_script:
       - python test.py
