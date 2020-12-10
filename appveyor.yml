@@ -33,7 +33,7 @@ for:
       # Configure the NPF driver
       - ps: wget "https://nmap.org/npcap/dist/npcap-0.96.exe" -UseBasicParsing -OutFile npcap.exe
       - ps: .\npcap.exe /loopback_support=yes /winpcap_mode=yes /S
-      - ps: net start npcap
+      - ps: cinst --no-progress -y wireshark
       - python --version
     test_script:
       - python test.py
