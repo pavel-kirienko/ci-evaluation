@@ -32,9 +32,8 @@ for:
       - sh: sudo setcap cap_net_raw+eip "$(readlink -f $(command -v python))"
       # Configure the NPF driver
       - ps: wget "https://nmap.org/npcap/dist/npcap-0.96.exe" -UseBasicParsing -OutFile npcap.exe
-      - ps: .\npcap.exe /loopback_support=yes /S
-      - ps: sc.exe start npcap
-      - ps: sc.exe start npf
+      - ps: .\npcap.exe /loopback_support=yes /winpcap_mode=yes /S
+      - ps: net start npcap
       - python --version
     test_script:
       - python test.py
