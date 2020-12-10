@@ -31,10 +31,10 @@ for:
       - pip install libpcap
       - sh: sudo setcap cap_net_raw+eip "$(readlink -f $(command -v python))"
       # Configure the NPF driver
-      - ps: cinst wireshark --no-progress -y
-      - cmd: net start npf
-    test_script:
+      - ps: wget "https://nmap.org/npcap/dist/npcap-0.96.exe" -UseBasicParsing -OutFile npcap.exe
+      - ps: Start-Process npcap.exe -ArgumentList "/loopback_support=yes /S" -wait
       - python --version
+    test_script:
       - python test.py
     on_success:
       - echo 'SUCCESS!'
