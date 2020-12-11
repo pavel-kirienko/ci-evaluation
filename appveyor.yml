@@ -27,15 +27,15 @@ for:
         - job_group: tests
     install:
       # Configure the NPF driver
-      - ps: wget "https://nmap.org/npcap/dist/npcap-0.96.exe" -UseBasicParsing -OutFile npcap.exe
-      - ps: .\npcap.exe /loopback_support=yes /winpcap_mode=yes /S
-      #- ps: cinst --no-progress -y wireshark
+      - cmd: 'curl.exe --output npcap.exe --url https://nmap.org/npcap/dist/npcap-0.96.exe'
+      - cmd: 'npcap.exe /loopback_support=yes /winpcap_mode=yes /S'
       # The previous steps may have disrupted connectivity because installation of the NDIS driver does that on Windows.
-      # Restart VM to recover network connectivity as suggested in https://github.com/appveyor/ci/issues/3491.
-      - ps: Start-Sleep -s 5; Restart-Computer
-      - ps: Start-Sleep -s 5
+      # Also, a restart appears to be necessary to enable the NPF service.
+      # To fix that, restart VM as suggested in https://github.com/appveyor/ci/issues/3491.
+      - cmd: 'shutdown /r /f /t 1'
+      - cmd: 'timeout 30'
       # Configure the rest of the environment after the reboot.
-      - cmd: set PATH=%PYTHON%;%PYTHON%\Scripts;%PATH%
+      - cmd: 'set PATH=%PYTHON%;%PYTHON%\Scripts;%PATH%'
       - sh: sudo setcap cap_net_raw+eip "$(readlink -f $(command -v python))"
       - pip install libpcap
       - python --version
