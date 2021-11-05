@@ -3,8 +3,25 @@ name: Test
 on: push
 
 jobs:
-  job1:
+  ci-diagnostics:
     runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+      - run: echo "${{ github.event.head_commit.message }}"
+      - run: echo "${{ github.ref }}"
+      - run: >
+            echo "${{
+            contains(github.event.head_commit.message, '#groom') ||
+            contains(github.ref, 'master') ||
+            contains(github.ref, 'release')
+            }}"
+
+  groom:
+    runs-on: ubuntu-latest
+    if: >
+      contains(github.event.head_commit.message, '#groom') ||
+      contains(github.ref, 'master') ||
+      contains(github.ref, 'release')
     steps:
       - uses: actions/checkout@v2
       - name: Testx
