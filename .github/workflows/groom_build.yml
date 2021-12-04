@@ -28,13 +28,13 @@ jobs:
         run: |
             echo "Commit message: ${{ github.event.head_commit.message }}"
 
-      - name: Upload diagnostic snapshot with ${{ 2 + 8 * failure() }}-day retention
+      - name: Upload diagnostic snapshot
         uses: actions/upload-artifact@v2
         if: always()
         with:
           name: workspace-${{github.job}}
           path: "*"
-          retention-days: ${{ 2 + 8 * failure() }}
+          retention-days: 300
 
   sonarcloud:
     runs-on: ubuntu-latest
