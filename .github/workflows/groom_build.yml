@@ -35,3 +35,14 @@ jobs:
           name: workspace-${{github.job}}
           path: "*"
           retention-days: ${{ 2 + 8 * failure() }}
+
+  sonarcloud:
+    runs-on: ubuntu-latest
+    # don't run sonarcloud on builds originating from forks
+    # due to secrets not being available
+    if: secrets.FOO
+    env:
+      FOO_TOKEN: ${{ secrets.FOO }}
+    steps:
+    - run: echo "SECRET FOO: $FOO"
+
