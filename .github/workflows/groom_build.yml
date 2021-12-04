@@ -44,5 +44,5 @@ jobs:
     env:
       FOO_TOKEN: ${{ secrets.FOO }}
     steps:
-    - run: echo "SECRET FOO: $FOO"
+    - run: echo "SECRET FOO $FOO"
 
