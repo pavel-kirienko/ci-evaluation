@@ -5,16 +5,25 @@ on: push
 jobs:
   ci-diagnostics:
     runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        cmake_build_type: [ Debug, Release ]
+        toolchain: [ clang, gcc ]
+        flags: [ '-m32', '-m64' ]
+        include:
+          - toolchain: gcc
+            c_compiler: gcc
+            cxx_compiler: g++
+          - toolchain: clang
+            c_compiler: clang
+            cxx_compiler: clang++
     steps:
       - uses: actions/checkout@v2
-      - run: echo "${{ github.event.head_commit.message }}"
-      - run: echo "${{ github.ref }}"
-      - run: >
-            echo "${{
-            contains(github.event.head_commit.message, '#groom') ||
-            contains(github.ref, 'master') ||
-            contains(github.ref, 'release')
-            }}"
+      - run: echo "${{ toJSON(matrix) }}"
+      - run: echo "${{ toJSON(matrix.*) }}"
+      - run: ${{ matrix.cxx_compiler }}-9 --version
+      - run: echo "${{ strategy.job-index }}-${{ join(matrix.*, ',') }}-${{job.status}}"
+        if: always()
 
   groom:
     runs-on: ubuntu-latest
@@ -34,15 +43,4 @@ jobs:
         with:
           name: workspace-${{github.job}}
           path: "*"
-          retention-days: 300
-
-  sonarcloud:
-    runs-on: ubuntu-latest
-    # don't run sonarcloud on builds originating from forks
-    # due to secrets not being available
-    if: secrets.FOO
-    env:
-      FOO_TOKEN: ${{ secrets.FOO }}
-    steps:
-    - run: echo "SECRET FOO $FOO"
-
+          retention-days: 3
