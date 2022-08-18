@@ -1,46 +1,10 @@
 name: Test
-
 on: push
-
 jobs:
   ci-diagnostics:
     runs-on: ubuntu-latest
-    strategy:
-      matrix:
-        cmake_build_type: [ Debug, Release ]
-        toolchain: [ clang, gcc ]
-        flags: [ '-m32', '-m64' ]
-        include:
-          - toolchain: gcc
-            c_compiler: gcc
-            cxx_compiler: g++
-          - toolchain: clang
-            c_compiler: clang
-            cxx_compiler: clang++
     steps:
       - uses: actions/checkout@v2
-      - run: echo "${{ toJSON(matrix) }}"
-      - run: echo "${{ toJSON(matrix.*) }}"
-      - run: ${{ matrix.cxx_compiler }}-9 --version
-      - run: echo "${{ strategy.job-index }}-${{ join(matrix.*, ',') }}-${{job.status}}"
-        if: always()
-
-  groom:
-    runs-on: ubuntu-latest
-    if: >
-      contains(github.event.head_commit.message, '#groom') ||
-      contains(github.ref, 'master') ||
-      contains(github.ref, 'release')
-    steps:
-      - uses: actions/checkout@v2
-      - name: Testx
-        run: |
-            echo "Commit message: ${{ github.event.head_commit.message }}"
-
-      - name: Upload diagnostic snapshot
-        uses: actions/upload-artifact@v2
-        if: always()
-        with:
-          name: workspace-${{github.job}}
-          path: "*"
-          retention-days: 3
+      - run: |
+          pip --quiet --disable-pip-version-check install --upgrade --upgrade-strategy=eager nox
+          nox --forcecolor --non-interactive
