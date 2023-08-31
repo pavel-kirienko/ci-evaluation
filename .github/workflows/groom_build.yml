@@ -7,4 +7,5 @@ jobs:
       - uses: actions/checkout@v2
       - run: |
           echo "${{github.event.head_commit.message}}"
+          echo "${{github.event.pull_request.author_association}}"
           echo "${{toJSON(github.event)}}"
