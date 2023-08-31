@@ -1,10 +1,11 @@
 name: Test
-on: push
+on: [push, pull_request]
 jobs:
   ci-diagnostics:
-    runs-on: ubuntu-22.04
+    runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v2
       - run: |
-          pip --quiet --disable-pip-version-check install --upgrade --upgrade-strategy=eager nox
-          nox -vv --forcecolor --non-interactive
+          echo "${{github.event.head_commit.message}}"
+          echo "${{github.event.pull_request.author_association}}"
+          echo "${{toJSON(github.event)}}"
